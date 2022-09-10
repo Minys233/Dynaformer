@@ -1,4 +1,3 @@
-[submodule "dynaformer_model"]
+[submodule "dynaformer"]
 	path = dynaformer
 	url = https://github.com/Minys233/dynaformer_model.git
-
