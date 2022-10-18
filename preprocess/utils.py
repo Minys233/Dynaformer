@@ -2,7 +2,7 @@
 from pathlib import Path
 from subprocess import run, DEVNULL
 from rdkit import Chem
-from rdkit.Chem import rdmolops
+import pymol
 
 
 def read_mol(mol_file: Path):
@@ -408,7 +408,6 @@ def correct_sanitize_v1(mol: Chem.Mol):
 
 
 def pymol_convert(in_file: Path, out_file: Path):
-    import pymol
     pymol.cmd.reinitialize()
     pymol.cmd.load(f"{str(in_file)}")
     # pymol.cmd.remove("hydrogens")
@@ -416,16 +415,24 @@ def pymol_convert(in_file: Path, out_file: Path):
     pymol.cmd.save(f"{str(out_file)}", "not sol.")
 
 
+def pymol_pocket(receptor_file: Path, ligand_file: Path, pocket_file: Path):
+    pymol.cmd.reinitialize()
+    pymol.cmd.load(f"{str(receptor_file)}", "receptor")
+    pymol.cmd.load(f"{str(ligand_file)}", "ligand")
+    pymol.cmd.select("pocket", "byres (receptor within 10 of ligand)")
+    pymol.cmd.save(f"{str(pocket_file)}", "pocket and not sol.")
+
+
 def obabel_pdb2mol(in_file: Path, out_file: Path):
-    run(['obabel', '-ipdb', str(in_file), '-omol', f'-O{str(out_file)}', '-x3v', '-h', '--partialcharge', 'eem'], check=True)#, stdout=DEVNULL, stderr=DEVNULL)
+    run(['obabel', '-ipdb', str(in_file), '-omol', f'-O{str(out_file)}', '-x3v', '-h', '--partialcharge', 'eem'], check=True, stdout=DEVNULL, stderr=DEVNULL)
 
 
 def obabel_sdf2mol(in_file: Path, out_file: Path):
-    run(['obabel', '-isdf', str(in_file), '-omol', f'-O{str(out_file)}', '-x3v', '-h', '--partialcharge', 'eem'], check=True)#, stdout=DEVNULL, stderr=DEVNULL)
+    run(['obabel', '-isdf', str(in_file), '-omol', f'-O{str(out_file)}', '-x3v', '-h', '--partialcharge', 'eem'], check=True, stdout=DEVNULL, stderr=DEVNULL)
 
 
 def obabel_mol22mol(in_file: Path, out_file: Path):
-    run(['obabel', '-imol2', str(in_file), '-omol', f'-O{str(out_file)}', '-x3v', '-h', '--partialcharge', 'eem'], check=True)#, stdout=DEVNULL, stderr=DEVNULL)
+    run(['obabel', '-imol2', str(in_file), '-omol', f'-O{str(out_file)}', '-x3v', '-h', '--partialcharge', 'eem'], check=True, stdout=DEVNULL, stderr=DEVNULL)
 
 
 if __name__ == "__main__":

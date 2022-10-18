@@ -1,7 +1,5 @@
-from tqdm import tqdm
-import pandas as pd
 import numpy as np
-from scipy.spatial.distance import euclidean, cdist
+from scipy.spatial.distance import cdist
 from pathlib import Path
 from torch_geometric.data import Data
 import torch
@@ -80,7 +78,6 @@ def gen_ligpro_edge(dm: np.ndarray, pocket_cutoff: float):
     edge_index = [(x, y + lig_num_atom) for x, y in zip(lig_idx, pro_idx)]
     edge_index += [(y + lig_num_atom, x) for x, y in zip(lig_idx, pro_idx)]
     edge_attr = np.array([SPATIAL_EDGE for _ in edge_index])
-    # b.GetBondOrder(), b.IsRotor(), b.IsInRing()
     edge_index = np.array(edge_index, dtype=np.int64).T
     edge_attr = np.array(edge_attr, dtype=np.int64)
     return edge_index, edge_attr
@@ -162,27 +159,24 @@ def load_pk_data(data_path: Path):
 def to_pyg_graph(raw: list, **kwargs):
     comp_coord, comp_feat, comp_ei, comp_ea, comp_num_node, comp_num_edge, rfscore, gbscore, ecif, pk, name = raw
 
-    # angle = gen_all_angle(torch.from_numpy(comp_coord).to(torch.float32))
-
     d = Data(x=torch.from_numpy(comp_feat).to(torch.long), edge_index=torch.from_numpy(comp_ei).to(torch.long), edge_attr=torch.from_numpy(comp_ea).to(torch.long),
              pos=torch.from_numpy(comp_coord).to(torch.float32), y=torch.tensor([pk], dtype=torch.float32), pdbid=name,
              num_node=torch.from_numpy(comp_num_node).to(torch.long), num_edge=torch.from_numpy(comp_num_edge).to(torch.long),
              rfscore=torch.from_numpy(rfscore).to(torch.float32), gbscore=torch.from_numpy(gbscore).to(torch.float32),
              ecif=torch.from_numpy(ecif).to(dtype=torch.float32),
-             # angle=angle.to(torch.float32),
              **kwargs)
     return d
 
 
 def get_info(protein_file, ligand_file):
     cmd.reinitialize()
-    cmd.load(protein_file, 'protein')
+    cmd.load(protein_file, 'receptor')
     cmd.load(ligand_file, 'ligand')
     cmd.remove('sol.')
     cmd.h_add()
     proinfo = {"elem": [], "resn": [], "coord":[], }
     liginfo = {"elem": [], "resn": [], "coord":[], }
-    cmd.iterate_state(1, 'protein', 'info["elem"].append(elem); info["resn"].append(resn); info["coord"].append(np.array([x, y, z]))',space={"info": proinfo, "np": np})
+    cmd.iterate_state(1, 'receptor', 'info["elem"].append(elem); info["resn"].append(resn); info["coord"].append(np.array([x, y, z]))',space={"info": proinfo, "np": np})
     cmd.iterate_state(1, 'ligand', 'info["elem"].append(elem); info["resn"].append(resn); info["coord"].append(np.array([x, y, z]))',space={"info": liginfo, "np": np})
     for k in proinfo.keys():
         proinfo[k] = np.array(proinfo[k])
