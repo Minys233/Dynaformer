@@ -1,0 +1,3 @@
+receptor,ligand,name,pk
+../example_data/2v7a/2v7a_protein.pdb,../example_data/2v7a/2v7a_ligand.sdf,2v7a,8.30
+../example_data/3udh/3udh_protein.pdb,../example_data/3udh/3udh_ligand.sdf,3udh,2.85
