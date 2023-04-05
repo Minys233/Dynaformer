@@ -40,7 +40,7 @@ Refer to `Dynaformer/examples/md_pretrain/md_train.sh` and `Dynaformer/examples/
 ### Custom input
 Currently, for custom input, users will need to run two scripts for graph data preparation and evaluation. We provide examples that were used in case studies of the paper. Additional dependencies are required for processing data, and use this command to install them: `conda install -c conda-forge pymol-open-source openbabel -y` under the `dynaformer` environment.
 
-1. Run `preprocess/custom_input.py` to convert protein PDB files and ligand SDF files into (PyG)[https://www.pyg.org/] graphs. 
+1. Run `preprocess/custom_input.py` to convert protein PDB files and ligand SDF files into [PyG](https://www.pyg.org/) graphs. 
 
 Users need provide a CSV file with column `receptor`, `ligand`, `name` and `pk` for protein PDB file path, ligand SDF file path, custom name of the pair and the pk value as label. Also an output path is specified for store the graphs in pickle format. Note that the `pk` column is only used for calculating deviations/correlations between prediction and ground-truth, set it to -1 if you don't have it. Here is an example:
 
