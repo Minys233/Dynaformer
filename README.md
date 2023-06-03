@@ -74,5 +74,3 @@ The results should be stored in the `checkpoint` directory. Unlike PDBBind, for 
 1. `preprocess/custom_input.py`: When processing data in parallel, there may be competing data writes resulting in incorrect contents of the intermediate file (SDF), resulting in failure to output .pkl results.
 
 2. Automatic evaluation with custom protein (PDB) & ligand (SDF) is under development. For now, need to use multiple scripts.
-
-3. Training data release.
